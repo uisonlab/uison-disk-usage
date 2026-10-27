@@ -1,0 +1,18 @@
+[package]
+name = "disk-usage"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+license = "MIT"
+description = "Where the disk space goes, as a sunburst chart: a uison example program."
+publish = false
+
+[dependencies]
+uison = "0.1.0"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

@@ -1,0 +1,10 @@
+target/
+out/
+.DS_Store
+
+# Claude Code: settings and internal notes (not in git)
+.claude/
+/CLAUDE.md
+
+# Private notes (not in git)
+/private/
