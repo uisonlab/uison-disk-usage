@@ -1,7 +1,7 @@
 // Parts of the Disk Usage screen. The code (lib.rs) prepares the data: rows hold already formatted numbers and colors,
 // `t.*` holds the texts in the interface language (i18n.rs).
 {
-  // Folder and file icons are outlines on a 24×24 grid, like the library's Icon.
+  // Folder and file icons on a 24×24 grid, like the library's Icon: outlines, and the filled open folder of the buttons.
   Glyph: {
     params: { name: "file", size: 15, color: "$theme.text" },
     body: {
@@ -10,6 +10,42 @@
         children: {
           switch: "$name",
           cases: {
+            // Filled, like the original's 🗁: the back with its tab, and the front flap slanted open.
+            // The flap is two triangles; a stroke of the same color covers the antialiasing seam between them.
+            folderOpen: [
+              { Rect: { at: [2, 4], w: 7, h: 4, radius: 1, fill: "$color" } },
+              { Rect: { at: [2, 6], w: 16, h: 3, fill: "$color" } },
+              { Rect: { at: [2, 6], w: 2.2, h: 14, fill: "$color" } },
+              { Tri: { points: [6.8, 11.3, 22.2, 11.3, 18.2, 19.7], fill: "$color", stroke: "$color", width: 0.6 } },
+              { Tri: { points: [6.8, 11.3, 18.2, 19.7, 2.3, 19.7], fill: "$color", stroke: "$color", width: 0.6 } },
+            ],
+            // The original's ⟳: an open circle as short lines (round caps hide the joints), the arrowhead at the top.
+            refresh: [
+              { Line: { from: [15.7, 6.1], to: [13.2, 5.1], width: 2.2 } },
+              { Line: { from: [13.2, 5.1], to: [10.5, 5.2], width: 2.2 } },
+              { Line: { from: [10.5, 5.2], to: [8.1, 6.2], width: 2.2 } },
+              { Line: { from: [8.1, 6.2], to: [6.2, 8.1], width: 2.2 } },
+              { Line: { from: [6.2, 8.1], to: [5.2, 10.5], width: 2.2 } },
+              { Line: { from: [5.2, 10.5], to: [5.1, 13.2], width: 2.2 } },
+              { Line: { from: [5.1, 13.2], to: [6.1, 15.7], width: 2.2 } },
+              { Line: { from: [6.1, 15.7], to: [7.9, 17.7], width: 2.2 } },
+              { Line: { from: [7.9, 17.7], to: [10.3, 18.8], width: 2.2 } },
+              { Line: { from: [10.3, 18.8], to: [13, 18.9], width: 2.2 } },
+              { Line: { from: [13, 18.9], to: [15.5, 18.1], width: 2.2 } },
+              { Line: { from: [15.5, 18.1], to: [17.5, 16.3], width: 2.2 } },
+              { Tri: { points: [19.2, 9.3, 18.5, 3.8, 13.7, 8.6], fill: "$color", stroke: "$color", width: 0.4 } },
+            ],
+            // The original's 🗑, filled: lid with its handle, and the can whose slots are gaps between bars
+            // (the button shows through them in any state).
+            trash: [
+              { Rect: { at: [9.5, 2.8], w: 5, h: 3, radius: 1, fill: "$color" } },
+              { Rect: { at: [4, 5], w: 16, h: 2.2, radius: 0.8, fill: "$color" } },
+              { Rect: { at: [5.5, 8.2], w: 13, h: 2, fill: "$color" } },
+              { Rect: { at: [5.5, 8.2], w: 3.2, h: 12, fill: "$color" } },
+              { Rect: { at: [10.4, 8.2], w: 3.2, h: 12, fill: "$color" } },
+              { Rect: { at: [15.3, 8.2], w: 3.2, h: 12, fill: "$color" } },
+              { Rect: { at: [5.5, 18], w: 13, h: 3, radius: 1.2, fill: "$color" } },
+            ],
             folder: [
               { Line: { from: [3, 6], to: [3, 19] } },
               { Line: { from: [3, 19], to: [21, 19] } },
@@ -33,13 +69,47 @@
     },
   },
 
+  // A Button with a Glyph before the text (the library Button takes only library icons):
+  // variant secondary | primary | danger, size sm | lg — as in Button.
+  GlyphButton: {
+    params: {
+      glyph: "folderOpen", text: "", variant: "secondary", size: "sm",
+      fg: {
+        switch: "$variant",
+        cases: { primary: "$theme.onPrimary", danger: "$theme.onPrimary" },
+        default: { state: { normal: "$theme.text", disabled: "$theme.muted" } },
+      },
+    },
+    interactive: true,
+    body: {
+      Box: {
+        padding: { switch: "$size", cases: { lg: [11, 22] }, default: [4, 10] },
+        radius: { switch: "$size", cases: { lg: "$theme.radius" }, default: "$theme.radiusSm" },
+        align: "center",
+        fill: {
+          switch: "$variant",
+          cases: {
+            primary: { state: { normal: "$theme.primary", hover: "$theme.primaryHover", pressed: "$theme.primaryPressed", disabled: "$theme.primaryDisabled" } },
+            danger: { state: { normal: "$theme.danger", hover: "$theme.dangerHover", pressed: "$theme.dangerPressed", disabled: "$theme.primaryDisabled" } },
+          },
+          default: { state: { normal: "$theme.surface", hover: "$theme.surfaceHover", pressed: "$theme.surfacePressed" } },
+        },
+        stroke: { switch: "$variant", cases: { secondary: "$theme.border" } },
+        child: { Row: { gap: { switch: "$size", cases: { lg: 8 }, default: 6 }, cross: "center", children: [
+          { Glyph: { name: "$glyph", size: { switch: "$size", cases: { lg: 19 }, default: 14 }, color: "$fg" } },
+          { Text: { text: "$text", bold: true, size: { switch: "$size", cases: { lg: 15 }, default: 12 }, color: "$fg" } },
+        ] } },
+      },
+    },
+  },
+
   Toolbar: {
     body: {
       Box: {
         padding: [8, 10], fill: "$theme.card",
         child: { Row: { w: "fill", gap: 8, cross: "center", children: [
-          { Button: { key: "open", text: "@t.open", variant: "secondary", size: "sm", on: { click: "open" }, tooltip: "@t.openTip", visible: "!@console" } },
-          { Button: { key: "rescan", text: "@t.rescan", variant: "secondary", size: "sm", disabled: "!@canRescan", on: { click: "rescan" }, tooltip: "@t.rescanTip" } },
+          { GlyphButton: { key: "open", text: "@t.open", on: { click: "open" }, tooltip: "@t.openTip", visible: "!@console" } },
+          { GlyphButton: { key: "rescan", glyph: "refresh", text: "@t.rescan", disabled: "!@canRescan", on: { click: "rescan" }, tooltip: "@t.rescanTip" } },
           { IconButton: { key: "up", icon: "arrowUp", size: "sm", disabled: "!@canUp", on: { click: "up" }, tooltip: "@t.upTip" } },
           { Box: { w: 1, h: 20, fill: "$theme.divider", visible: "@crumbs" } },
           {
@@ -116,12 +186,12 @@
   StartScreen: {
     body: {
       Column: {
-        padding: [120, 20, 20, 20], gap: 6, cross: "center",
+        padding: [24, 20, 64, 20], gap: 6, main: "center", cross: "center",
         children: [
           { Text: { text: "Disk Usage", size: 32, bold: true } },
           { Text: { text: "@t.tagline", color: "$theme.muted" } },
           { Text: { text: "@message", color: "$theme.warning", visible: "@message", margin: [12, 0, 0, 0] } },
-          { Button: { key: "choose", text: "@t.choose", size: "lg", minW: 220, margin: [24, 0, 10, 0], on: { click: "open" }, visible: "!@console" } },
+          { GlyphButton: { key: "choose", text: "@t.choose", variant: "primary", size: "lg", minW: 220, margin: [24, 0, 10, 0], on: { click: "open" }, visible: "!@console" } },
           { Text: { text: "@t.orScan", color: "$theme.muted", margin: [0, 0, 4, 0] } },
           {
             For: {
@@ -137,11 +207,12 @@
   ScanScreen: {
     body: {
       Column: {
-        padding: [150, 24, 24, 24], gap: 6, cross: "center",
+        padding: [24, 24, 64, 24], gap: 6, main: "center", cross: "center",
         children: [
-          { Canvas: { key: "spinner", draw: "spinner", w: 40, h: 40, margin: [0, 0, 12, 0] } },
+          { Canvas: { key: "spinner", draw: "spinner", w: 80, h: 80, margin: [0, 0, 18, 0] } },
           { Text: { text: "@scan.title", size: 20 } },
-          { Text: { text: "@scan.counts", size: 16 } },
+          // The counts change twice a second: monospace keeps their width, so the centered line doesn't jitter.
+          { Text: { text: "@scan.counts", size: 15, font: "monospace" } },
           { Text: { text: "@scan.current", size: 14, color: "$theme.muted", maxLines: 1, w: 600, margin: [4, 0, 0, 0] } },
           { Text: { text: "@scan.stall", color: "$theme.warning", visible: "@scan.stall", maxW: 640, align: "center" } },
           { Button: { key: "cancel", text: "@t.cancel", variant: "secondary", size: "lg", minW: 160, margin: [16, 0, 0, 0], on: { click: "cancel" } } },
@@ -155,17 +226,30 @@
       Row: {
         cross: "stretch",
         children: [
-          { DetailsPanel: { w: 380 } },
-          { Box: { w: 1, fill: "$theme.divider" } },
+          { DetailsPanel: { w: "@layout.details" } },
+          { Splitter: { key: "splitDetails", path: "@layout.details", min: 260, max: 600, delta: 1 } },
           {
             Canvas: {
               key: "chart", draw: "chart", flex: 1, h: "fill", cursor: "arrow",
               on: { click: "chartClick", hover: "chartHover" }, contextMenu: "@menu",
             },
           },
-          { Box: { w: 1, fill: "$theme.divider", visible: "@queue.count" } },
-          { QueuePanel: { w: 320, visible: "@queue.count" } },
+          { Splitter: { key: "splitQueue", path: "@layout.queue", min: 240, max: 520, delta: -1, visible: "@queue.count" } },
+          { QueuePanel: { w: "@layout.queue", visible: "@queue.count" } },
         ],
+      },
+    },
+  },
+
+  // A divider between panels: dragging sets the panel width at `path` (`delta: -1` — the panel is to the right),
+  // a double click brings back the default (lib.rs). The 6 pt grip is wider than its 1 pt line.
+  Splitter: {
+    params: { path: "", min: 0, max: 0, delta: 1 },
+    body: {
+      Box: {
+        w: 6, h: "fill", align: "center", cursor: "resize-x",
+        drag: { path: "$path", min: "$min", max: "$max", delta: "$delta" }, on: { click: "resetWidth" },
+        child: { Box: { w: 1, h: "fill", fill: { state: { normal: "$theme.divider", hover: "$theme.border", pressed: "$theme.muted" } } } },
       },
     },
   },
@@ -263,7 +347,7 @@
             Row: {
               gap: 6, margin: [4, 0, 0, 0],
               children: [
-                { Button: { key: "trashAll", text: "@t.trashAll", variant: "danger", size: "sm", on: { click: "trashQueued" }, tooltip: "@t.trashAllTip" } },
+                { GlyphButton: { key: "trashAll", glyph: "trash", text: "@t.trashAll", variant: "danger", on: { click: "trashQueued" }, tooltip: "@t.trashAllTip" } },
                 { Button: { key: "clearQueue", text: "@t.clearQueue", variant: "secondary", size: "sm", on: { click: "clearQueue" }, tooltip: "@t.clearQueueTip" } },
               ],
             },
@@ -323,9 +407,17 @@
             gap: 6, cross: "center",
             children: [
               { Text: { text: "Disk Usage", size: 22, bold: true } },
+              { Text: { text: "@t.version", size: 13, color: "$theme.muted" } },
               { Text: { text: "@t.aboutLine", color: "$theme.muted" } },
               { Text: { text: "@t.aboutText", align: "center", margin: [8, 0, 0, 0] } },
-              { Link: { text: "github.com/MarketKernel/disk-usage", href: "https://github.com/MarketKernel/disk-usage", margin: [8, 0, 0, 0] } },
+              // A link Text rather than the library Link: that one is as wide as the column and starts at its left.
+              {
+                Text: {
+                  text: "github.com/MarketKernel/disk-usage", href: "https://github.com/MarketKernel/disk-usage", margin: [8, 0, 0, 0],
+                  color: { state: { normal: "$theme.primary", hover: "$theme.primaryHover", pressed: "$theme.primaryPressed" } },
+                  decoration: { state: { normal: "none", hover: "underline", pressed: "underline" } },
+                },
+              },
               { Button: { key: "closeAbout", text: "@t.close", variant: "secondary", margin: [10, 0, 0, 0], on: { click: "closeAbout" } } },
             ],
           },

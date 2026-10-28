@@ -511,9 +511,18 @@ fn tooltip(w: &mut Writer, m: &dyn TextMeasure, rect: Rect, at: Point, tree: &Tr
 pub fn spinner(w: &mut Writer, rect: Rect, now: f64) {
     let geo = Geometry { center: Point::new(rect.x + rect.w / 2.0, rect.y + rect.h / 2.0), hole: 0.0, base: 0.0, rings: 0 };
     let r = rect.w.min(rect.h) / 2.0 - 2.0;
-    let a0 = (now.rem_euclid(1.0) * TAU as f64) as f32;
-    let _ = w.circle(geo.center, r - 2.5).stroke(colors::PANEL, 5.0);
-    sector(w, &geo, r - 5.0 - GAP, r + GAP, a0, a0 + TAU * 0.3, colors::TEXT_WEAK);
+    let thick = (r * 0.28).max(5.0);
+    let _ = w.circle(geo.center, r - thick / 2.0).stroke(colors::PANEL, thick);
+    // A rainbow tail behind the head going clockwise: red at the head, violet and fading at the end —
+    // sectors with the chart's gaps between them.
+    const PARTS: usize = 18;
+    let (head, part) = ((now.rem_euclid(1.2) / 1.2) as f32 * TAU, TAU * 0.7 / PARTS as f32);
+    for i in 0..PARTS {
+        let t = i as f32 / (PARTS - 1) as f32;
+        let a1 = head - part * i as f32;
+        let c = colors::alpha(colors::rainbow(t), 1.0 - 0.5 * t);
+        sector(w, &geo, r - thick - GAP, r + GAP, a1 - part, a1, c);
+    }
 }
 
 #[cfg(test)]

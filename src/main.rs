@@ -52,9 +52,9 @@ mod native {
     use disk_usage::Lang;
     use uison::{Event, Headless, MouseButton, Point};
 
-    /// A point on the first ring of the chart in a 1280×840 window (the left panel is 380 pt).
+    /// A point on the first ring of the chart in a 1280×840 window (the left panel is 380 pt, its divider 6 pt).
     fn ring0(angle: f32) -> Point {
-        let (cx, cy, r) = (381.0 + 899.0 / 2.0, 47.0 + 764.0 / 2.0, 100.0);
+        let (cx, cy, r) = (386.0 + 894.0 / 2.0, 47.0 + 764.0 / 2.0, 100.0);
         Point::new(cx + r * angle.sin(), cy - r * angle.cos())
     }
 
@@ -96,6 +96,30 @@ mod native {
                 h.event(Event::MouseMove(q)).unwrap();
                 h.event(Event::MouseDown(q, MouseButton::Right)).unwrap();
                 shot(&h, "7_menu.png");
+                // "Add to Trash queue" (only the list, nothing is deleted): the queue panel appears.
+                let add = Point::new(998.0, 558.0);
+                h.event(Event::MouseDown(add, MouseButton::Left)).unwrap();
+                h.event(Event::MouseUp(add, MouseButton::Left)).unwrap();
+                // Dragging the left divider past its limit: the panel stops at 600 pt, the chart gets no hover.
+                let drag = |h: &mut Headless, from: Point, to: &[f32]| {
+                    h.event(Event::MouseMove(from)).unwrap();
+                    h.event(Event::MouseDown(from, MouseButton::Left)).unwrap();
+                    for &x in to {
+                        h.event(Event::MouseMove(Point::new(x, from.y))).unwrap();
+                    }
+                };
+                drag(&mut h, Point::new(383.0, 400.0), &[483.0, 900.0]);
+                shot(&h, "8_resizing.png");
+                h.event(Event::MouseUp(Point::new(900.0, 400.0), MouseButton::Left)).unwrap();
+                // A double click brings the default width back; the queue panel is 100 pt wider.
+                let (div, queue) = (Point::new(603.0, 400.0), Point::new(1280.0 - 320.0 - 3.0, 400.0));
+                for _ in 0..2 {
+                    h.event(Event::MouseDown(div, MouseButton::Left)).unwrap();
+                    h.event(Event::MouseUp(div, MouseButton::Left)).unwrap();
+                }
+                drag(&mut h, queue, &[queue.x - 100.0]);
+                h.event(Event::MouseUp(Point::new(queue.x - 100.0, 400.0), MouseButton::Left)).unwrap();
+                shot(&h, "9_resized.png");
                 true
             }
             Some("--bench") => {

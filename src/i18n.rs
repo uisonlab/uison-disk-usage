@@ -110,6 +110,7 @@ impl Lang {
             d.set(&format!("t.{key}"), self.pick(en, ru));
         }
         d.set("t.showIn", self.show_in());
+        d.set("t.version", format!("{} {}", self.pick("Version", "Версия"), env!("CARGO_PKG_VERSION")));
     }
 
     // ------------------------------------------------------------ counts

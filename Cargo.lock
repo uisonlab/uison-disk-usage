@@ -4,16 +4,16 @@ version = 4
 
 [[package]]
 name = "disk-usage"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "uison",
 ]
 
 [[package]]
 name = "uison"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a767ee95a1723575777a65077ff6431eacf82205242beaed38861c4b7c8b2668"
+checksum = "59ff7ee00fdb71d72f75896546e4caaed50d29faa0338daed0bcc1891c88527f"
 dependencies = [
  "uison-android",
  "uison-core",
@@ -30,9 +30,9 @@ dependencies = [
 
 [[package]]
 name = "uison-android"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b68b37f81dae89c00a2911157470c46ecb3fb64d3c5bfd1ce098be65f004203"
+checksum = "b91b4c3cf629d1644ec9c3c16a323dc30b7c40bc8ab2518b788a6f44f7e0ddb3"
 dependencies = [
  "uison-core",
  "uison-frame",
@@ -40,9 +40,9 @@ dependencies = [
 
 [[package]]
 name = "uison-apple"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b919f8e3f78bbac664aa4c144972d46887855816754a109ab9a0286221349e04"
+checksum = "b512652230e6c561ba1793d4e43a8d907a932d307ff1fa1018a4a00d1d268759"
 dependencies = [
  "uison-core",
  "uison-frame",
@@ -50,21 +50,21 @@ dependencies = [
 
 [[package]]
 name = "uison-core"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1f47f0e81e24a6fec1aa7478a221bfea5773670961cc79ecf02814d0a0b9efc"
+checksum = "3726d2c2f778f7b1bd80d1abf781d38b5431d6524b564fa3ed96876e2c9b3e12"
 
 [[package]]
 name = "uison-derive"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2327da2356f895ad7c416e5e5b63cc67bdbc3e8766e4d91c7ebc8ef0f8dc449"
+checksum = "f990c5e7c22e8509f1e4c05f3d8b2e3891b862c19f0e5ab8c2081feb2a305552"
 
 [[package]]
 name = "uison-frame"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "365cc67311d3df134b845627b45ed36e44d4fd362665f41514cf3cbdcf80693d"
+checksum = "038354f5acb08f0a953a016b4b0b880c2d94fe3ab331729baf130111f38f1212"
 dependencies = [
  "uison-core",
  "uison-json",
@@ -72,9 +72,9 @@ dependencies = [
 
 [[package]]
 name = "uison-ios"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e9ecb010630e8c1048ecce1ada86045e0d777ed2c3a36796f611b808253bf07b"
+checksum = "07678b667d327ea5ac03028ae8b8ae80e2db9c27e1e2cd87842e64682f576221"
 dependencies = [
  "uison-apple",
  "uison-core",
@@ -83,15 +83,15 @@ dependencies = [
 
 [[package]]
 name = "uison-json"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f48ff81169f0f9dcd0482d6b8df84c8331092df70bf8ab9fc9d5325e149d5da"
+checksum = "38ebf91e58f665c077202606a8ac352e5f2fe459f1e10e7d7a94655416d15530"
 
 [[package]]
 name = "uison-linux"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1701007a3dae7bfdc49b1a2bf5d7b86f445e4717c404af1285ca7d5d40ba6a9e"
+checksum = "a7628969f27b8a491c8682372ee9559cd30160abd467cba6099c6223da6073a3"
 dependencies = [
  "uison-core",
  "uison-frame",
@@ -99,9 +99,9 @@ dependencies = [
 
 [[package]]
 name = "uison-macos"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "849546e3e137e88e1a8162ac7df03ff63bbb635a609ff5bf41c4be52a829d816"
+checksum = "e113431cba0a310a3a3f0659094674a458d7a17091b9cb417385edb4b3cb00b8"
 dependencies = [
  "uison-apple",
  "uison-core",
@@ -110,9 +110,9 @@ dependencies = [
 
 [[package]]
 name = "uison-ui"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d1003d34ca435a1f0c9fb26721e4b69bea8ec0c2d8a56839e4dd0f3bfd7ab8dd"
+checksum = "7b51d6f0f9392776d159fe263c0c2b04066ea0b039cee183f06b95112789d682"
 dependencies = [
  "uison-core",
  "uison-frame",
@@ -121,9 +121,9 @@ dependencies = [
 
 [[package]]
 name = "uison-web"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c903d1578a0ffc00420ac35c273bb920d65ca200b980ce6dc396cbd7d224cf4"
+checksum = "bec203d8a8ffe272848fdbfc5bbfb799882c3749331e34951dfe40cd97365054"
 dependencies = [
  "uison-core",
  "uison-frame",
@@ -131,9 +131,9 @@ dependencies = [
 
 [[package]]
 name = "uison-windows"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7900ec496802765bdde584a2c6e9893b5915a6ca0d81ef1890c12e2576f4a07c"
+checksum = "533bbf0f2e3b1d0b0745b57bc3c33e56f47ab282e9b02875df72b532662fa94a"
 dependencies = [
  "uison-core",
  "uison-frame",

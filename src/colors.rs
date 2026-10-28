@@ -37,6 +37,11 @@ pub fn sector(share: f32, ring: f32, is_dir: bool) -> Color {
     hsv(hue, sat, val)
 }
 
+/// A color of the chart's rainbow at position `t`: 0 is red, 1 is violet (the scanning spinner).
+pub fn rainbow(t: f32) -> Color {
+    hsv(t.clamp(0.0, 1.0) * HUE_VIOLET, 0.5, 0.97)
+}
+
 fn hsv(h: f32, s: f32, v: f32) -> Color {
     let h6 = h.rem_euclid(1.0) * 6.0;
     let c = v * s;

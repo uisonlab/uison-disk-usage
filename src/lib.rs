@@ -67,6 +67,8 @@ struct State {
     quick: Vec<PathBuf>,
     /// Folders counted and when the number last changed, to notice that the scanner is waiting.
     scan_seen: (u64, f64),
+    /// When the scan counts were last shown: they change every tick, but are shown at most twice a second.
+    counts_at: f64,
     /// List rows: index by id, and the folder whose file is selected.
     rows: HashMap<NodeId, usize>,
     queue_rows: HashMap<NodeId, usize>,
@@ -128,6 +130,7 @@ impl State {
         let path = std::path::absolute(&path).unwrap_or(path);
         self.message = None;
         self.scan_seen = (0, now());
+        self.counts_at = f64::NEG_INFINITY;
         self.scan = Some(Scan::start(path));
         cx.timer(16, "scanTick");
         self.sync(cx);
@@ -146,8 +149,11 @@ impl State {
             let d = &mut *cx.data;
             let lang = self.lang;
             d.set("scan.title", lang.scanning(&scan.root));
-            let secs = scan.started.elapsed().as_secs();
-            d.set("scan.counts", lang.scan_counts(p.files.load(Relaxed), dirs, p.bytes.load(Relaxed), secs));
+            if t - self.counts_at >= COUNTS_EVERY {
+                self.counts_at = t;
+                let secs = scan.started.elapsed().as_secs();
+                d.set("scan.counts", lang.scan_counts(p.files.load(Relaxed), dirs, p.bytes.load(Relaxed), secs));
+            }
             if let Ok(cur) = p.current.try_lock() {
                 d.set("scan.current", cur.to_string_lossy().into_owned());
             }
@@ -577,6 +583,12 @@ impl State {
 
 type Shared = Rc<RefCell<State>>;
 
+/// How often the scan counts are updated, seconds.
+const COUNTS_EVERY: f64 = 0.5;
+
+/// Default widths of the selection panel and the Trash queue panel (data `layout.*`).
+const PANEL_WIDTHS: [(&str, f64); 2] = [("layout.details", 380.0), ("layout.queue", 320.0)];
+
 /// Action handler: state + context.
 fn on(ui: &mut Ui, s: &Shared, action: &str, f: impl Fn(&mut State, &mut Cx) + 'static) {
     let s = s.clone();
@@ -741,6 +753,17 @@ fn build(path: Option<PathBuf>, sync_scan: bool, lang: Lang) -> Ui {
     act(&mut ui, &s, "mUnqueue", |st, cx| {
         if let Some(n) = st.menu_node(cx) {
             st.queue.remove(n);
+        }
+    });
+
+    // Panel widths: the dividers drag them, a double click brings back the default.
+    for (path, w) in PANEL_WIDTHS {
+        ui.data.set(path, w);
+    }
+    ui.on("resetWidth", |cx| {
+        let (path, w) = PANEL_WIDTHS[cx.key.starts_with("splitQueue") as usize];
+        if cx.clicks == 2 {
+            cx.data.set(path, w);
         }
     });
 

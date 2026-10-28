@@ -11,7 +11,7 @@ animation are the same; panels, list, breadcrumbs, menus, tooltips and About are
 ```sh
 cargo run --release -- ~/Downloads         # window; without a path, the start screen
 cargo run --release -- --lang ru ~/Downloads   # start in Russian
-target/release/disk-usage --png out/du ~/Documents        # headless screenshots: view, tooltip, selection, zoom, menu
+target/release/disk-usage --png out/du ~/Documents        # headless screenshots: view, tooltip, selection, zoom, menu, dividers
 target/release/disk-usage --bench ~/Documents             # frame build time
 SCAN_BENCH=~/Documents cargo test --release bench_scan -- --ignored --nocapture
 ```
@@ -51,6 +51,10 @@ side by side.
   the node's rectangle (clipped). Everything else (layout, events, menus, tooltips) works as for any node.
 - **`cx.pos`, `cx.clicks`, the `hover` event**: the cursor point in a handler (relative to the node), the click number
   in a series (double click), cursor movement over the node and leaving it (`pos = None`).
+- **Panel dividers**: `drag` with `delta` — the value at the press plus the pointer shift (`delta: -1` for a panel to the
+  right of its divider), the `resize-x` cursor (↔ in every backend), and while dragging the whole window keeps the
+  dragged node's cursor and area: a divider stopped at its limit doesn't flicker to the arrow, and the chart under the
+  pointer gets no hover. A double click on a divider brings the default width back (`cx.clicks`).
 - **Re-entrancy protection** (macOS, Windows): a modal dialog inside a handler (folder picker) spins its own
   event loop; window events now wait for the handler to finish instead of entering the app a second time.
 
@@ -76,7 +80,8 @@ redrawing half the window; a full window redraw is 1.7 ms. 820 KB is almost enti
 
 - **macOS**: window, real mouse and keyboard (`tools/drive.swift`): hover and tooltip, selection, double
   click on a sector and on a row (animated zoom), list scrolling, right click → "Copy path" (clipboard),
-  ⌘⌫ → Trash queue and "Clear all", About and Escape, "Open…" (NSOpenPanel) with cancel.
+  ⌘⌫ → Trash queue and "Clear all", About and Escape, "Open…" (NSOpenPanel) with cancel; dragging the left divider
+  past its limit and releasing outside the window (the cursor stays ↔, no chart tooltip).
   "Move to Trash" was not pressed: those are real folders (the code is `NSFileManager trashItemAtURL`).
 - **Linux** (OrbStack, headless Sway): window with a scenario (quick folder, scan, About), `--png`
   screenshots (Cairo + Pango).
@@ -88,7 +93,7 @@ redrawing half the window; a full window redraw is 1.7 ms. 820 KB is almost enti
 
 ## Missing compared to the original
 
-- Dragging a folder onto the window (uison has no drag-and-drop) and resizing panels with the mouse.
+- Dragging a folder onto the window (uison has no drag-and-drop).
 - The path in the window title (`Host` has no `set_title`), a minimum window size, the F5 key (`KeyCode` has no F1–F9).
 - Scrolling the breadcrumbs: a long path is truncated.
 - The `Canvas` node in the C/C++ API (no drawing function from C).
